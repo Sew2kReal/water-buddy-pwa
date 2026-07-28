@@ -1,0 +1,14 @@
+# OS
+Thumbs.db
+.DS_Store
+*.obj
+*.exe
+*.dll
+
+# Other projects
+BloodstrikeESP/
+water-buddy-pwa/
+SKILL.md
+assets/
+references/
+modern-web-design-1.0.0.tar.gz

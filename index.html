@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Water Buddy - Nhắc uống nước thông minh, theo dõi lượng nước mỗi ngày">
+  <meta name="format-detection" content="telephone=no">
+  <meta property="og:title" content="Water Buddy">
+  <meta property="og:description" content="Nhắc uống nước thông minh mỗi ngày">
+  <meta property="og:type" content="website">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%234facfe'/%3E%3Ctext y='68' font-size='58' text-anchor='middle' x='50'%3E💧%3C/text%3E%3C/svg%3E">
+  <link rel="manifest" href="manifest.json">
+  <title>Water Buddy</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark">
+  <div id="app" role="application" aria-label="Water Buddy - Ứng dụng nhắc uống nước">
+
+    <!-- ═══ Navigation ═══ -->
+    <header class="nav" role="banner">
+      <div class="nav-inner">
+        <div class="nav-left">
+          <span class="nav-logo" role="img" aria-label="Biểu tượng giọt nước">💧</span>
+          <span class="nav-title">Water Buddy</span>
+        </div>
+        <div class="nav-right">
+          <button class="nav-btn" id="statsToggle" aria-label="Xem thống kê" title="Thống kê">📊</button>
+          <button class="nav-btn" id="settingsToggle" aria-label="Mở cài đặt" title="Cài đặt">⚙️</button>
+        </div>
+      </div>
+    </header>
+
+    <main role="main">
+
+      <!-- ═══ Hero Section ═══ -->
+      <section class="hero section-animate" aria-label="Lượng nước hôm nay">
+        <div class="hero-bg-glow"></div>
+        <div class="hero-content">
+          <p class="hero-label">Hôm nay bạn đã uống</p>
+          <h1 class="hero-amount" id="heroAmount" aria-live="polite">0<span class="hero-unit">ml</span></h1>
+          <div class="hero-progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="2000" id="heroProgressTrack">
+            <div class="hero-progress-bar" id="heroProgressBar"></div>
+          </div>
+          <p class="hero-goal" id="heroGoal">còn <span id="heroRemaining">2.000</span>ml để đạt mục tiêu</p>
+        </div>
+      </section>
+
+      <!-- ═══ Glass Visualization ═══ -->
+      <section class="glass-section section-animate" aria-label="Cốc nước trực quan">
+        <div class="glass-wrapper">
+          <div class="glass" id="glass">
+            <div class="glass-rim"></div>
+            <div class="glass-body" id="glassBody">
+              <div class="glass-water" id="glassWater" style="height: 0%">
+                <div class="water-surface"></div>
+                <div class="water-surface water-surface-2"></div>
+                <div class="water-surface water-surface-3"></div>
+              </div>
+              <div class="glass-shine"></div>
+            </div>
+            <div class="glass-base"></div>
+          </div>
+          <div class="glass-progress-ring" id="progressRing" role="status" aria-label="Tiến trình cốc nước">
+            <svg viewBox="0 0 120 120" class="ring-svg" aria-hidden="true">
+              <defs>
+                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#4facfe"/>
+                  <stop offset="100%" stop-color="#00f2fe"/>
+                </linearGradient>
+              </defs>
+              <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="4"/>
+              <circle cx="60" cy="60" r="54" fill="none" stroke="url(#ringGrad)" stroke-width="4"
+                stroke-linecap="round" stroke-dasharray="339.292" stroke-dashoffset="339.292"
+                id="ringCircle" transform="rotate(-90 60 60)"/>
+            </svg>
+            <div class="ring-label">
+              <span id="glassCount" aria-hidden="true">0</span>
+              <small aria-hidden="true">/8</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Actions ═══ -->
+      <section class="actions section-animate">
+        <button class="drink-btn hover-lift" id="drinkBtn" aria-label="Uống 250ml nước">
+          <span class="drink-btn-icon" aria-hidden="true">💧</span>
+          <span class="drink-btn-text">Uống 250ml</span>
+        </button>
+      </section>
+
+      <!-- ═══ Stats Grid ═══ -->
+      <section class="stats-grid section-animate" aria-label="Thống kê nhanh">
+        <div class="stat-card stat-card-streak hover-lift">
+          <div class="stat-icon" aria-hidden="true">🔥</div>
+          <div class="stat-value" id="streakValue">0</div>
+          <div class="stat-label">Chuỗi ngày</div>
+        </div>
+        <div class="stat-card hover-lift">
+          <div class="stat-icon" aria-hidden="true">🥤</div>
+          <div class="stat-value" id="glassCountStat">0</div>
+          <div class="stat-label">Số cốc</div>
+        </div>
+        <div class="stat-card hover-lift">
+          <div class="stat-icon" aria-hidden="true">📊</div>
+          <div class="stat-value" id="progressPercent">0%</div>
+          <div class="stat-label">Hoàn thành</div>
+        </div>
+      </section>
+
+      <!-- ═══ Calendar ═══ -->
+      <section class="section section-animate" id="calendarSection" aria-label="Lịch uống nước">
+        <div class="section-header">
+          <div class="calendar-nav">
+            <button class="cal-nav-btn hover-scale" id="calPrev" aria-label="Tháng trước">‹</button>
+            <h2 class="cal-title" id="calTitle">Tháng 7, 2026</h2>
+            <button class="cal-nav-btn hover-scale" id="calNext" aria-label="Tháng sau">›</button>
+          </div>
+          <button class="cal-today-btn" id="calTodayBtn" aria-label="Quay về hôm nay">Hôm nay</button>
+        </div>
+        <div class="calendar-body">
+          <div class="cal-weekdays" role="row" aria-hidden="true">
+            <span role="columnheader">CN</span><span role="columnheader">T2</span><span role="columnheader">T3</span>
+            <span role="columnheader">T4</span><span role="columnheader">T5</span><span role="columnheader">T6</span><span role="columnheader">T7</span>
+          </div>
+          <div class="cal-grid" id="calGrid" role="grid" aria-label="Lịch tháng"></div>
+        </div>
+        <div class="calendar-legend">
+          <div class="legend-item"><span class="legend-dot" style="background:rgba(79,172,254,0.15)"></span> Chưa uống</div>
+          <div class="legend-item"><span class="legend-dot" style="background:rgba(79,172,254,0.4)"></span> &lt; 50%</div>
+          <div class="legend-item"><span class="legend-dot" style="background:rgba(79,172,254,0.75)"></span> &ge; 50%</div>
+          <div class="legend-item"><span class="legend-dot" style="background:linear-gradient(135deg,#4facfe,#00f2fe)"></span> Đủ nước ✓</div>
+        </div>
+      </section>
+
+      <!-- ═══ Day Detail ═══ -->
+      <section class="section section-animate day-detail" id="dayDetail" style="display:none" aria-label="Chi tiết ngày">
+        <div class="section-header">
+          <h2 id="dayDetailTitle">Chi tiết ngày</h2>
+          <button class="section-close hover-scale" id="dayDetailClose" aria-label="Đóng chi tiết">✕</button>
+        </div>
+        <div class="day-detail-body" id="dayDetailBody">
+          <p class="day-detail-empty">Chọn một ngày để xem chi tiết</p>
+        </div>
+      </section>
+
+      <!-- ═══ Today's Log ═══ -->
+      <section class="section section-animate" id="logSection" aria-label="Nhật ký hôm nay">
+        <div class="section-header">
+          <h2>📋 Nhật ký hôm nay</h2>
+          <button class="clear-day-btn" id="clearDayBtn" aria-label="Xoá tất cả cốc nước hôm nay">🗑 Xoá hết</button>
+        </div>
+        <div class="log-body" id="logBody">
+          <p class="log-empty">Chưa uống cốc nào</p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ═══ Footer ═══ -->
+    <footer class="footer" role="contentinfo">
+      <div class="footer-content">
+        <p>Water Buddy &mdash; Uống nước mỗi ngày 🌊</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ═══ Toast ═══ -->
+  <div class="toast" id="toast" role="alert" aria-live="assertive">
+    <span class="toast-icon" id="toastIcon" aria-hidden="true">💧</span>
+    <span class="toast-msg" id="toastMsg"></span>
+  </div>
+
+  <!-- ═══ Settings Modal ═══ -->
+  <div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true" aria-label="Cài đặt">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 tabindex="0">⚙️ Cài đặt</h2>
+        <button class="modal-close hover-scale" id="settingsModalClose" aria-label="Đóng cài đặt">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-row">
+          <span class="settings-label">Âm thanh khi uống</span>
+          <label class="switch" aria-label="Bật/tắt âm thanh">
+            <input type="checkbox" id="soundToggle" checked>
+            <span class="switch-track"></span>
+          </label>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Kiểm tra âm thanh</span>
+          <button class="test-btn-sm hover-scale" id="testBtn" aria-label="Phát thử âm thanh">🔊 Phát thử</button>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Phiên bản</span>
+          <span class="settings-value">2.0.0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Stats Modal ═══ -->
+  <div class="modal-overlay" id="statsModal" role="dialog" aria-modal="true" aria-label="Thống kê">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 tabindex="0">📊 Thống kê</h2>
+        <button class="modal-close hover-scale" id="statsModalClose" aria-label="Đóng thống kê">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="stats-summary">
+          <div class="stats-summary-item">
+            <span class="stats-summary-value" id="statsTotalDays">0</span>
+            <span class="stats-summary-label">Tổng ngày</span>
+          </div>
+          <div class="stats-summary-item">
+            <span class="stats-summary-value" id="statsFullDays">0</span>
+            <span class="stats-summary-label">Ngày đủ nước</span>
+          </div>
+          <div class="stats-summary-item">
+            <span class="stats-summary-value" id="statsAvgMl">0</span>
+            <span class="stats-summary-label">TB ml/ngày</span>
+          </div>
+          <div class="stats-summary-item">
+            <span class="stats-summary-value" id="statsBestStreak">0</span>
+            <span class="stats-summary-label">Chuỗi cao nhất</span>
+          </div>
+        </div>
+        <div class="stats-chart">
+          <p class="stats-chart-title">7 ngày gần nhất</p>
+          <div class="chart-bars" id="chartBars" role="img" aria-label="Biểu đồ 7 ngày"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
